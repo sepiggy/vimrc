@@ -21,6 +21,7 @@ autocmd! BufNewFile,BufRead * :Limelight 0.8
 " ----- 进入 goyo 模式后自动触发 limelight, 退出后则关闭 ----- {{{
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight
+
 " }}}
 " }}}
 
@@ -202,69 +203,72 @@ nnoremap <leader>s :source $MYVIMRC<cr>
 " }}}
 
 " ----- 标签页相关 ----- {{{
+" 新建标签页
 nnoremap <silent> <tab>n :tabnew<cr>
+
+" 查找并在新标签页中打开文件
+nnoremap <tab>f :tabfind<space>
+
+" 显示已打开标签页的列表
+nnoremap <silent> <tab>s :tabs<cr>
+
+" 关闭当前标签页
 nnoremap <silent> <tab>w :tabclose<cr>
+
+" 仅保留当前标签页
+nnoremap <silent> <tab>o :tabonly<cr>
+
+" 跳转到上一个标签页
 nnoremap <silent> <tab>h :tabp<cr>
+
+" 跳转到下一个标签页
 nnoremap <silent> <tab>l :tabn<cr>
-nnoremap <silent> <leader>1 :tabn 1<cr>
-nnoremap <silent> <leader>2 :tabn 2<cr>
-nnoremap <silent> <leader>3 :tabn 3<cr>
-nnoremap <silent> <leader>4 :tabn 4<cr>
-nnoremap <silent> <leader>5 :tabn 5<cr>
-nnoremap <silent> <leader>6 :tabn 6<cr>
-nnoremap <silent> <leader>7 :tabn 7<cr>
-nnoremap <silent> <leader>8 :tabn 8<cr>
-nnoremap <silent> <leader>9 :tabn 9<cr>
-nnoremap <silent> <leader>0 :tabn 10<cr>
+
+" 跳转到第一个标签页
+nnoremap <silent> <tab>a :tabfirst<cr>
+
+" 跳转到最后一个标签页
+nnoremap <silent> <tab>z :tablast<cr>
+
+" 跳转到下一个标签页
 nnoremap <silent> <s-tab> :tabnext<cr>
 inoremap <silent> <s-tab> <esc>:tabnext<cr>
+
+" 跳转到指定的标签页
+nnoremap <silent> <tab>1 :tabn 1<cr>
+nnoremap <silent> <tab>2 :tabn 2<cr>
+nnoremap <silent> <tab>3 :tabn 3<cr>
+nnoremap <silent> <tab>4 :tabn 4<cr>
+nnoremap <silent> <tab>5 :tabn 5<cr>
+nnoremap <silent> <tab>6 :tabn 6<cr>
+nnoremap <silent> <tab>7 :tabn 7<cr>
+nnoremap <silent> <tab>8 :tabn 8<cr>
+nnoremap <silent> <tab>9 :tabn 9<cr>
+nnoremap <silent> <tab>0 :tabn 10<cr>
 " }}}
 
-" ----- 跳转分割窗口 ----- {{{
+" ----- 分割窗口相关 ----- {{{
+" 跳转分割窗口
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 nnoremap <c-w> <c-w>c
-" }}}
 
-" ----- 正常模式下 alt + j, k, h, l 调整分割窗口大小 ----- {{{
+" 使用 Alt + H/J/K/L 调整分割窗口的大小
 nnoremap <m-j> :resize +5<cr>
 nnoremap <m-k> :resize -5<cr>
 nnoremap <m-h> :vertical resize -5<cr>
 nnoremap <m-l> :vertical resize +5<cr>
+
+inoremap <m-j> <esc>:resize +5<cr>i
+inoremap <m-k> <esc>:resize -5<cr>i
+inoremap <m-h> <esc>:vertical resize -5<cr>i
+inoremap <m-l> <esc>:vertical resize +5<cr>i
 " }}}
 
-" ----- 插入模式下的 keymap ----- {{{
-" 模拟 <esc>
-inoremap jk <esc>
-
-" 插入模式下模拟Emacs键位
-inoremap <c-f> <right>
-inoremap <c-b> <left>
-inoremap <c-p> <up>
-inoremap <c-n> <down>
-inoremap <c-a> <home>
-inoremap <c-e> <end>
-inoremap <c-h> <bs>
-
-" 插入模式下模拟符号键
-inoremap qq _
-inoremap ww +
-inoremap zz -
-inoremap xx =
-" }}}
-
-"----- 命令模式下的 keymap ----- {{{
-cnoremap <c-a> <home>
-cnoremap <c-e> <end>
-"}}} 
-
-" ----- 其他键相关 ----- {{{
-" 按分号键直接进入命令模式
-nnoremap ; :
-
-" 强制居中
+" ----- 跳转相关 ----- {{{
+" 跳转后强制居中 
 nnoremap j jzz
 nnoremap k kzz
 nnoremap ( (zz
@@ -272,17 +276,65 @@ nnoremap ) )zz
 nnoremap { {zz
 nnoremap } }zz
 
+" 跳转到当前行的首部
+nnoremap gh g^
+
+" 跳转到当前行的尾部
+nnoremap gl g$
+" }}}
+
+" ----- 插入模式下的 keymap (若没有明确配置则是 Vim 的内置功能) ----- {{{
+" <jk> 进入到正常模式
+inoremap jk <esc>
+
+" <c-w> 删除到词首; <c-e> 到行尾; <c-t> 缩进
+inoremap <c-e> <end>
+
+" <c-a> 跳转到行首; <c-d> 反缩进; <c-f> 模拟 <right>
+inoremap <c-a> <home>
+inoremap <c-f> <right>
+inoremap <m-f> <s-right>
+
+" <c-x> 进入到 <c-x> 子模式; <c-v> 切换到行 visual 模式; <c-b> 模拟 <left>
+inoremap <c-v> <esc>V
+inoremap <c-b> <left>
+inoremap <m-b> <s-left>
+
+" <c-y> 复制上一行相同位置的字符到本行; <c-u> 删除字符到行首(但保留行首的缩进);
+" <c-o> 进入到正常-插入模式; <c-p> 模拟 <up>
+inoremap <c-p> <up>
+
+" <c-h> 删除光标前的字符; <c-k> 删除字符到行尾
+inoremap <c-k> <esc>ld$a
+
+" <c-n> 模拟 <down>; <c-m> 回车
+inoremap <c-n> <down>
+" }}}
+
+"----- 命令模式下的 keymap ----- {{{
+cnoremap <c-a> <home>
+cnoremap <c-e> <end>
+cnoremap <c-p> <up>
+cnoremap <c-n> <down>
+cnoremap <c-f> <right>
+cnoremap <c-b> <left>
+cnoremap <m-f> <s-right>
+cnoremap <m-b> <s-left>
+cnoremap jk <c-c>
+"}}} 
+
+" ----- 其他键相关 ----- {{{
+" 按分号键直接进入命令模式
+nnoremap ; :
+
+" 连接两行
+nnoremap gJ J
+
 " 将当前光标所在的单词用双引号括起来
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 
 " 将当前光标所在的单词用单引号括起来
 nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
-
-" 移动到当前行的首部
-nnoremap gh g^
-
-" 移动到当前行的尾部
-nnoremap gl g$
 
 " 从当前位置复制到行尾
 nnoremap Y y$
@@ -359,7 +411,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 " ----- 3. easymotion----- {{{
 Plug 'easymotion/vim-easymotion'
 map <Leader> <Plug>(easymotion-prefix)
-let g:EasyMotion_smartcase = 0
+let g:EasyMotion_smartcase = 1
 nmap w <Plug>(easymotion-bd-w)
 nmap W <Plug>(easymotion-bd-W)
 nmap e <Plug>(easymotion-bd-e)
@@ -383,8 +435,8 @@ noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
 
 " ----- 6. vim-expand-region ----- {{{
 Plug 'terryma/vim-expand-region'
-map v <plug>(expand_region_expand)
-map V <plug>(expand_region_shrink)
+map vj <plug>(expand_region_expand)
+map vk <plug>(expand_region_shrink)
 " }}}
 
 " ----- 7. vim-multiple-cursors ----- {{{
@@ -468,6 +520,19 @@ let g:rainbow_active = 1
 
 " ----- 24. flazz/vim-colorschemes ----- {{{
 Plug 'flazz/vim-colorschemes'
+" }}}
+
+" ----- davidhalter/jedi-vim ----- {{{
+Plug 'davidhalter/jedi-vim'
+" }}}
+
+" ----- vim-scripts/YankRing.vim ----- {{{
+Plug 'vim-scripts/YankRing.vim'
+nnoremap <silent> <F11> :YRShow<CR>
+" }}}
+
+" ----- tpope/vim-unimpaired ----- {{{
+Plug 'tpope/vim-unimpaired'
 " }}}
 
 call plug#end()
