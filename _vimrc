@@ -21,8 +21,13 @@ autocmd! BufNewFile,BufRead * :Limelight 0.8
 " ----- 进入 goyo 模式后自动触发 limelight, 退出后则关闭 ----- {{{
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight
-
 " }}}
+
+" 让光标停留在中央，固定视觉的重点/编辑区域
+autocmd! CursorMoved * normal zz
+
+set pastetoggle=<leader>p
+
 " }}}
 
 " vim 使用习惯 {{{
@@ -101,7 +106,7 @@ let $LANG='en_us.UTF-8'
 " GUI {{{
 " ----- 配置主题 ----- {{{
 colorscheme predawn
-" set background=light
+set background=dark
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 " }}}
@@ -147,19 +152,6 @@ set guioptions-=b
 set guifont=Inconsolata:h14:cANSI
 " }}}
 
-" ----- 设置 statusline ----- {{{
-" set statusline=%f
-" set statusline+=%m
-" set statusline+=%=
-" set statusline+=%{''.(&fenc!=''?&fenc:&enc).''}
-" set statusline+=/
-" set statusline+=%{&ff}    "file format
-" set statusline+=\ -\      " Separator
-" set statusline+=%l/%L
-" set statusline+=[%p%%]
-" set statusline+=\ -\      " Separator
-" set statusline+=%1*\ %y\ %*
-" }}}
 " }}}
 
 " Format {{{
@@ -268,14 +260,6 @@ inoremap <m-l> <esc>:vertical resize +5<cr>i
 " }}}
 
 " ----- 跳转相关 ----- {{{
-" 跳转后强制居中 
-nnoremap j jzz
-nnoremap k kzz
-nnoremap ( (zz
-nnoremap ) )zz
-nnoremap { {zz
-nnoremap } }zz
-
 " 跳转到当前行的首部
 nnoremap gh g^
 
@@ -293,12 +277,12 @@ inoremap <c-e> <end>
 " <c-a> 跳转到行首; <c-d> 反缩进; <c-f> 模拟 <right>
 inoremap <c-a> <home>
 inoremap <c-f> <right>
-inoremap <m-f> <s-right>
+" inoremap <m-f> <s-right>
 
 " <c-x> 进入到 <c-x> 子模式; <c-v> 切换到行 visual 模式; <c-b> 模拟 <left>
 inoremap <c-v> <esc>V
 inoremap <c-b> <left>
-inoremap <m-b> <s-left>
+" inoremap <m-b> <s-left>
 
 " <c-y> 复制上一行相同位置的字符到本行; <c-u> 删除字符到行首(但保留行首的缩进);
 " <c-o> 进入到正常-插入模式; <c-p> 模拟 <up>
@@ -311,7 +295,7 @@ inoremap <c-k> <esc>ld$a
 inoremap <c-n> <down>
 " }}}
 
-"----- 命令模式下的 keymap ----- {{{
+" ----- 命令模式下的 keymap ----- {{{
 cnoremap <c-a> <home>
 cnoremap <c-e> <end>
 cnoremap <c-p> <up>
@@ -323,18 +307,25 @@ cnoremap <m-b> <s-left>
 cnoremap jk <c-c>
 "}}} 
 
-" ----- 其他键相关 ----- {{{
+" ----- 可视模式下的 keymap ----- {{{
+vnoremap ; :
+"  }}}
+
+" ----- 正常模式下的 keymap ----- {{{
 " 按分号键直接进入命令模式
 nnoremap ; :
 
 " 连接两行
-nnoremap gJ J
+nnoremap zJ J
 
 " 将当前光标所在的单词用双引号括起来
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 
 " 将当前光标所在的单词用单引号括起来
 nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
+
+" 将当前光标所在的单词用圆括号括起来
+nnoremap <leader>( viw<esc>a)<esc>hbi(<esc>lel
 
 " 从当前位置复制到行尾
 nnoremap Y y$
@@ -359,8 +350,34 @@ endfunc
 
 " Plugin {{{
 call plug#begin()
+" --- 1. 配色主题相关 --- {{{
+" ----- 1.1 flazz/vim-colorschemes ----- {{{
+Plug 'flazz/vim-colorschemes'
+" }}}
 
-" ----- 1.1 nerdtree ----- {{{
+" ----- 1.2 vim-airline/vim-airline ----- {{{
+Plug 'vim-airline/vim-airline'
+set laststatus=2
+" }}}
+
+" ----- 1.3 vim-airline-themes/vim-airline-themes ----- {{{
+Plug 'vim-airline/vim-airline-themes'
+" }}}
+
+" ----- 1.4 junegunn/goyo.vom ----- {{{
+Plug 'junegunn/goyo.vim'
+nmap <leader>g :Goyo<cr>
+xmap <leader>g :Goyo<cr>
+" }}}
+
+" ----- 1.5 junegunn/limelight.vim ----- {{{
+Plug 'junegunn/limelight.vim'
+nnoremap <leader>l :Limelight!! 0.8<cr>
+" }}}
+" }}}
+
+" --- 2 文件浏览搜索相关 --- {{{
+" ----- 2.1 nerdtree ----- {{{
 Plug 'scrooloose/nerdtree'
 " nerdtree快捷键
 " 设置显示位置
@@ -384,12 +401,12 @@ if exists('g:NERDTreeWinPos')
 endif
 " }}}
 
-" ----- 1.2 jistr/vim-nerdtree-tabs ----- {{{
+" ----- 2.2 jistr/vim-nerdtree-tabs ----- {{{
 Plug 'jistr/vim-nerdtree-tabs'
 map <leader>t <plug>NERDTreeTabsToggle<cr>
 " }}}
 
-" ----- 1.3 Xuyuanp/nerdtree-git-plugin ----- {{{
+" ----- 2.3 Xuyuanp/nerdtree-git-plugin ----- {{{
 Plug 'Xuyuanp/nerdtree-git-plugin'
 let g:NERDTreeIndicatorMapCustom = {
     \ "Modified"  : "✹",
@@ -404,51 +421,81 @@ let g:NERDTreeIndicatorMapCustom = {
     \ }
 " }}}
 
-" ----- 2. ctrlp.vim ----- {{{
-Plug 'ctrlpvim/ctrlp.vim'
+" ----- 2.4 bufferhint ---- {{{
+Plug 'bsdelf/bufferhint'
+nnoremap - :call bufferhint#Popup()<cr>
+nnoremap \ :call bufferhint#LoadPrevious()<cr>
 " }}}
 
-" ----- 3. easymotion----- {{{
+" ----- 2.5 ctrlp.vim ----- {{{
+Plug 'ctrlpvim/ctrlp.vim'
+" }}}
+" }}}
+
+" --- 3. 极速跳转、定位相关 --- {{{
+" ----- 3.1 easymotion ----- {{{
 Plug 'easymotion/vim-easymotion'
-map <Leader> <Plug>(easymotion-prefix)
-let g:EasyMotion_smartcase = 1
+let g:EasyMotion_leader_key='<leader>'
+let g:EasyMotion_smartcase=1
+let g:EasyMotion_use_smartsign_us=1
+let g:EasyMotion_use_upper=1
+let g:EasyMotion_keys='ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
+let g:EasyMotion_verbose=0
 nmap w <Plug>(easymotion-bd-w)
 nmap W <Plug>(easymotion-bd-W)
 nmap e <Plug>(easymotion-bd-e)
 nmap E <Plug>(easymotion-bd-E)
 nmap f <Plug>(easymotion-overwin-f)
+nmap t <plug>(easymotion-bd-t)
 nmap J <Plug>(easymotion-j)
 nmap K <Plug>(easymotion-k)
 nmap H <Plug>(easymotion-Fl)
 nmap L <Plug>(easymotion-fl)
 " }}}
 
-" ----- 4. auto-pairs ----- {{{
-Plug 'jiangmiao/auto-pairs'
-"  }}}
-
-" ----- 5. vim-smooth-scroll ----- {{{
+" ----- 3.2 vim-smooth-scroll ----- {{{
 Plug 'terryma/vim-smooth-scroll'
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-"  }}}
-
-" ----- 6. vim-expand-region ----- {{{
-Plug 'terryma/vim-expand-region'
-map vj <plug>(expand_region_expand)
-map vk <plug>(expand_region_shrink)
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<cr>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<cr>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<cr>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<cr>
+" }}}
 " }}}
 
-" ----- 7. vim-multiple-cursors ----- {{{
+" --- 4. 代码编写、自动补全 --- {{{
+" ----- 4.1 auto-pairs ----- {{{
+Plug 'jiangmiao/auto-pairs'
+let g:AutoPairsFlyMode=1
+let g:AutoPairsShortcutFastWrap='<m-w>'
+" }}}
+
+" ----- 4.2 vim-multiple-cursors ----- {{{
 Plug 'terryma/vim-multiple-cursors'
 " }}}
 
-" ----- 8. vim-commentary ----- {{{
+" ----- 4.3 vim-commentary ----- {{{
 Plug 'tpope/vim-commentary'
 " }}}
 
-" ----- 9. vim-surround ----- {{{
+" ----- 4.4 vim-surround ----- {{{
 Plug 'tpope/vim-surround'
+" }}}
+" }}}
+
+" ------ 5 自动补全 ------ {{{
+" --------- 5.1 ervandew/supertab --------- {{{
+Plug 'ervandew/supertab'
+" }}}
+
+" ------- 5.2 davidhalter/jedi-vim ------- {{{
+Plug 'davidhalter/jedi-vim'
+" }}}
+" }}}
+
+" ----- 6. vim-expand-region ----- {{{
+Plug 'terryma/vim-expand-region'
+" map vj <plug>(expand_region_expand)
+" map vk <plug>(expand_region_shrink)
 " }}}
 
 "  ----- 10. vim-fugitive ----- {{{
@@ -471,59 +518,11 @@ Plug 'rking/ag.vim'
 Plug 'vim-scripts/Conque-Shell'
 " }}}
 
-" ----- 15. bufferhint ---- {{{
-Plug 'bsdelf/bufferhint'
-nnoremap - :call bufferhint#Popup()<cr>
-nnoremap \ :call bufferhint#LoadPrevious()<cr>
-" }}}
-
-" ----- 16. JamshedVesuna/vim-markdown-previe ----- {{{
-Plug 'JamshedVesuna/vim-markdown-preview'
-let vim_markdown_preview_hotkey='<c-m>'
-let vim_markdown_preview_browser='Google Chrome'
-" }}}
-
-" ----- 17. junegunn/goyo.vom ----- {{{
-Plug 'junegunn/goyo.vim'
-nmap <leader>g :Goyo<cr>
-xmap <leader>g :Goyo<cr>
-" }}}
-
-" ----- 18. junegunn/limelight.vim ----- {{{
-Plug 'junegunn/limelight.vim'
-nnoremap <leader>l :Limelight!! 0.8<cr>
-" }}}
 
 " ----- 19. junegunn/vim-easy-align ----- {{{
 Plug 'junegunn/vim-easy-align'
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-" }}}
-
-" ----- 20. ervandew/supertab ----- {{{
-Plug 'ervandew/supertab'
-" }}}
-
-" ----- 21. vim-airline/vim-airline ----- {{{
-Plug 'vim-airline/vim-airline'
-set laststatus=2
-" }}}
-
-" ----- 22. vim-airline-themes/vim-airline-themes ----- {{{
-Plug 'vim-airline/vim-airline-themes'
-" }}}
-
-" ----- 23. luochen1990/rainbow ----- {{{
-Plug 'luochen1990/rainbow'
-let g:rainbow_active = 1
-" }}}
-
-" ----- 24. flazz/vim-colorschemes ----- {{{
-Plug 'flazz/vim-colorschemes'
-" }}}
-
-" ----- davidhalter/jedi-vim ----- {{{
-Plug 'davidhalter/jedi-vim'
 " }}}
 
 " ----- vim-scripts/YankRing.vim ----- {{{
@@ -537,4 +536,5 @@ Plug 'tpope/vim-unimpaired'
 
 call plug#end()
 " }}}
+
 
